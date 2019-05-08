@@ -6,6 +6,8 @@ services:
     networks:
       tomochain:
         ipv4_address: 172.28.1.2
+    ports:
+      - 8545:8545
     environment:
       PRIVATE_KEY: 260ffc09a584553c0cd20d324ee65eafec2728675acc76b2e62fbba7603ee43a
     volumes:
