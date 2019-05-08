@@ -1,0 +1,121 @@
+version: "3.7"
+
+services:
+  bootnode:
+    image: tomochain/bootnode:stable
+    networks:
+      tomochain:
+        ipv4_address: 172.28.1.2
+    environment:
+      PRIVATE_KEY: 260ffc09a584553c0cd20d324ee65eafec2728675acc76b2e62fbba7603ee43a
+    volumes:
+      - bootnode:/tomochain
+
+  tomochain01:
+    image: tomochain/node:latest
+    environment:
+      IDENTITY: tomochain01
+      GENESIS_PATH: /tomochain/genesis.json
+      PASSWORD_FILE: /run/secrets/tomochain_password
+      PRIVATE_KEY_FILE: /run/secrets/tomochain_pk_tomochain01
+      BOOTNODES: enode://dc910479ea00c828719a3ac1e0f3f91e2112e9c0a10fddb71ce0f3ed6d585883f93971c3d44142eaa19a18950f848cdc275ecaf3226a3691b80219658571f67a@172.28.1.2:30301
+      NETWORK_ID: 88889
+      VERBOSITY: 5
+      NETSTATS_HOST: netstats
+      NETSTATS_PORT: 3000
+      WS_SECRET_FILE: /run/secrets/netstats_ws_secret
+      ANNOUNCE_TXS: 'true'
+    networks:
+      tomochain:
+    secrets:
+      - tomochain_password
+      - tomochain_pk_tomochain01
+      - netstats_ws_secret
+    volumes:
+      - tomochain01:/tomochain/data
+      - ./genesis/genesis.json:/tomochain/genesis.json
+
+  tomochain02:
+    image: tomochain/node:latest
+    environment:
+      IDENTITY: tomochain02
+      GENESIS_PATH: /tomochain/genesis.json
+      PASSWORD_FILE: /run/secrets/tomochain_password
+      PRIVATE_KEY_FILE: /run/secrets/tomochain_pk_tomochain02
+      BOOTNODES: enode://dc910479ea00c828719a3ac1e0f3f91e2112e9c0a10fddb71ce0f3ed6d585883f93971c3d44142eaa19a18950f848cdc275ecaf3226a3691b80219658571f67a@172.28.1.2:30301
+      NETWORK_ID: 88889
+      VERBOSITY: 3
+      NETSTATS_HOST: netstats
+      NETSTATS_PORT: 3000
+      WS_SECRET_FILE: /run/secrets/netstats_ws_secret
+      ANNOUNCE_TXS: 'true'
+    networks:
+      tomochain:
+    secrets:
+      - tomochain_password
+      - tomochain_pk_tomochain02
+      - netstats_ws_secret
+    volumes:
+      - tomochain02:/tomochain/data
+      - ./genesis/genesis.json:/tomochain/genesis.json
+
+  tomochain03:
+    image: tomochain/node:latest
+    environment:
+      IDENTITY: tomochain03
+      GENESIS_PATH: /tomochain/genesis.json
+      PASSWORD_FILE: /run/secrets/tomochain_password
+      PRIVATE_KEY_FILE: /run/secrets/tomochain_pk_tomochain03
+      BOOTNODES: enode://dc910479ea00c828719a3ac1e0f3f91e2112e9c0a10fddb71ce0f3ed6d585883f93971c3d44142eaa19a18950f848cdc275ecaf3226a3691b80219658571f67a@172.28.1.2:30301
+      NETWORK_ID: 88889
+      VERBOSITY: 3
+      NETSTATS_HOST: netstats
+      NETSTATS_PORT: 3000
+      WS_SECRET_FILE: /run/secrets/netstats_ws_secret
+      ANNOUNCE_TXS: 'true'
+    networks:
+      tomochain:
+    secrets:
+      - tomochain_password
+      - tomochain_pk_tomochain03
+      - netstats_ws_secret
+    volumes:
+      - tomochain03:/tomochain/data
+      - ./genesis/genesis.json:/tomochain/genesis.json
+
+  netstats:
+    image: tomochain/netstats:stable
+    environment:
+      WS_SECRET_FILE: /run/secrets/netstats_ws_secret
+    ports:
+      - 3000:3000
+    networks:
+      tomochain:
+    secrets:
+      - netstats_ws_secret
+
+secrets:
+  tomochain_password:
+    file: ./secrets/tomochain_password
+  tomochain_pk_tomochain01:
+    file: ./secrets/tomochain_pk_tomochain01
+  tomochain_pk_tomochain02:
+    file: ./secrets/tomochain_pk_tomochain02
+  tomochain_pk_tomochain03:
+    file: ./secrets/tomochain_pk_tomochain03
+  netstats_ws_secret:
+    file: ./secrets/netstats_ws_secret
+
+volumes:
+  bootnode:
+  tomochain01:
+  tomochain02:
+  tomochain03:
+
+networks:
+  tomochain:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+
