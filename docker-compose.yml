@@ -27,6 +27,8 @@ services:
       NETSTATS_PORT: 3000
       WS_SECRET_FILE: /run/secrets/netstats_ws_secret
       ANNOUNCE_TXS: 'true'
+      STORE_REWARD: 'true'
+      DEBUG_MODE: 'true'
     networks:
       tomochain:
     secrets:
@@ -51,6 +53,8 @@ services:
       NETSTATS_PORT: 3000
       WS_SECRET_FILE: /run/secrets/netstats_ws_secret
       ANNOUNCE_TXS: 'true'
+      STORE_REWARD: 'true'
+      DEBUG_MODE: 'true'
     networks:
       tomochain:
     secrets:
@@ -75,6 +79,8 @@ services:
       NETSTATS_PORT: 3000
       WS_SECRET_FILE: /run/secrets/netstats_ws_secret
       ANNOUNCE_TXS: 'true'
+      STORE_REWARD: 'true'
+      DEBUG_MODE: 'true'
     networks:
       tomochain:
     secrets:
@@ -161,6 +167,12 @@ services:
       tomochain:
     ports:
       - 3002:3001
+    depends_on:
+      - mongodb
+      - redis
+      - tomochain01
+      - tomochain02
+      - tomochain03
 
   tomomaster_crawler:
     image: tomochain/tomomaster:latest
