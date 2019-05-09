@@ -96,6 +96,95 @@ services:
     secrets:
       - netstats_ws_secret
 
+  tomoscan:
+    image: tomochain/tomoscan-client:latest
+    ports:
+      - 3001:3000
+    networks:
+      tomochain:
+    environment:
+      API_URL: http://tomoscan_server:3333
+
+  tomoscan_server:
+    image: tomochain/tomoscan-server:latest
+    networks:
+      tomochain:
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/tomoscan
+      REDIS_HOST: redis
+      CLIENT_URL: http://localhost:3001/
+      TOMOMASTER_API_URL: http://tomomaster:3001
+      BASE_URL: http://localhost:3001
+      WEB3_URI: http://tomochain01:8545
+      NODE_ENV: 'devnet'
+
+  tomoscan_crawler:
+    image: tomochain/tomoscan-server:latest
+    command: run crawl
+    networks:
+      tomochain:
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/tomoscan
+      REDIS_HOST: redis
+      WEB3_URI: http://tomochain02:8545
+      NODE_ENV: 'devnet'
+
+  tomoscan_pending_txs:
+    image: tomochain/tomoscan-server:latest
+    command: run subscribe-pending-tx
+    networks:
+      tomochain:
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/tomoscan
+      REDIS_HOST: redis
+      WEB3_URI: http://tomochain02:8545
+      WEB3_WS_URI: ws://tomochain03:8546
+      NODE_ENV: 'devnet'
+
+  tomomaster:
+    image: tomochain/tomomaster:latest
+    environment:
+      NODE_ENV: 'devnet'
+      BC_NETWORK_ID: 88889
+      TOMOSCAN_API_URL: http://tomoscan:3000
+      TOMOSCAN_SITE_URL: http://localhost:3001
+      BC_WS: http://tomochain02:8546
+      BC_RPC: http://tomochain02:8545
+      DB_URI: mongodb://mongodb:27017/tomomaster
+    networks:
+      tomochain:
+    ports:
+      - 3002:3001
+
+  tomomaster_crawler:
+    image: tomochain/tomomaster:latest
+    command: run crawl
+    networks:
+      tomochain:
+    environment:
+      NODE_ENV: 'devnet_crawler'
+      REDIS_HOST: redis
+      BC_NETWORK_ID: 88889
+      BC_WS: http://tomochain02:8546
+      BC_RPC: http://tomochain02:8545
+      DB_URI: mongodb://mongodb:27017/tomomaster
+    depends_on:
+      - mongodb
+      - redis
+
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongodb:/data/db
+    networks:
+      tomochain:
+
+  redis:
+    image: redis:4-alpine
+    networks:
+      tomochain:
+
+
 secrets:
   tomochain_password:
     file: ./secrets/tomochain_password
@@ -113,6 +202,7 @@ volumes:
   tomochain01:
   tomochain02:
   tomochain03:
+  mongodb:
 
 networks:
   tomochain:
@@ -120,4 +210,3 @@ networks:
       driver: default
       config:
         - subnet: 172.28.0.0/16
-
