@@ -128,6 +128,12 @@ services:
       REDIS_HOST: redis
       WEB3_URI: http://tomochain02:8545
       NODE_ENV: 'devnet'
+    depends_on:
+      - mongodb
+      - redis
+      - tomochain01
+      - tomochain02
+      - tomochain03
 
   tomoscan_pending_txs:
     image: tomochain/tomoscan-server:latest
@@ -171,6 +177,9 @@ services:
     depends_on:
       - mongodb
       - redis
+      - tomochain01
+      - tomochain02
+      - tomochain03
 
   mongodb:
     image: mongo:latest
