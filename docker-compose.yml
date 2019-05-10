@@ -6,8 +6,6 @@ services:
     networks:
       tomochain:
         ipv4_address: 172.28.1.2
-    ports:
-      - 8545:8545
     environment:
       PRIVATE_KEY: 260ffc09a584553c0cd20d324ee65eafec2728675acc76b2e62fbba7603ee43a
     volumes:
@@ -15,6 +13,8 @@ services:
 
   tomochain01:
     image: tomochain/node:latest
+    ports:
+      - 8545:8545
     environment:
       IDENTITY: tomochain01
       GENESIS_PATH: /tomochain/genesis.json
@@ -194,10 +194,10 @@ services:
       - tomochain03
 
   tomowallet:
-    image: tomochain/wallet:latest
+    image: tomochain/tomowallet:latest
     environment:
       BC_NETWORK_ID: 88889
-      BC_RPC: http://tomochain01:8545
+      BC_RPC: http://localhost:8545
       BC_EXPLORER: http://localhost:3001
       DB_URI: mongodb://mongodb:27017/tomowallet
       REDIS_HOST: redis
