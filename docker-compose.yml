@@ -198,6 +198,7 @@ services:
     environment:
       BC_NETWORK_ID: 88889
       BC_RPC: http://localhost:8545
+      BC_PRIVATE_RPC: http://tomochain01:8545
       BC_EXPLORER: http://localhost:3001
       DB_URI: mongodb://mongodb:27017/tomowallet
       REDIS_HOST: redis
