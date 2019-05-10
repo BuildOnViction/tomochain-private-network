@@ -193,6 +193,26 @@ services:
       - tomochain02
       - tomochain03
 
+  tomowallet:
+    image: tomochain/wallet:latest
+    environment:
+      BC_NETWORK_ID: 88889
+      BC_RPC: http://tomochain01:8545
+      BC_EXPLORER: http://localhost:3001
+      DB_URI: mongodb://mongodb:27017/tomowallet
+      REDIS_HOST: redis
+      PRIVATEKEY: 96a2833565e1a6a402cef5b5e7fa894a13c94d45e890d74420097c8c6a447fda
+    networks:
+      tomochain:
+    ports:
+      - 3003:3000
+    depends_on:
+      - mongodb
+      - redis
+      - tomochain01
+      - tomochain02
+      - tomochain03
+
   mongodb:
     image: mongo:latest
     volumes:
